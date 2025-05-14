@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization Dashboard Case Study</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #00FF85;
+            --primary-dark: #00CC6A;
+            --secondary: #7C3AED;
+            --secondary-light: #A78BFA;
+            --secondary-dark: #5B21B6;
+            --dark: #121212;
+            --dark-gray: #1E1E1E;
+            --medium-gray: #2D2D2D;
+            --light-gray: #3D3D3D;
+            --lighter-gray: #6B7280;
+            --light: #F9FAFB;
+            --accent: #F43F5E;
+            --text-dark: #121212;
+            --text-light: #F9FAFB;
+            --text-gray: #9CA3AF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dark-gray);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--light-gray);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--lighter-gray);
+        }
+        
+        /* Header styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background-color: rgba(18, 18, 18, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0 3rem;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, var(--secondary-dark) 0%, var(--dark) 70%);
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/api/placeholder/1200/800') center/cover no-repeat;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .hero-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(124, 58, 237, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-tag {
+            display: inline-block;
+            background-color: rgba(124, 58, 237, 0.2);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+        }
+        
+        .hero-tag i {
+            margin-right: 0.5rem;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, var(--primary) 0%, var(--secondary-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .skill-badge {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-badge:hover {
+            background-color: var(--primary-dark);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+        
+        /* Content styling */
+        .content {
+            padding: 3rem;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .section {
+            margin: 5rem 0;
+            position: relative;
+            background-color: var(--dark-gray);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .section-header {
+            padding: 2rem 3rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin: 0;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary);
+        }
+        
+        .section-title i {
+            margin-right: 1rem;
+            color: var(--secondary);
+        }
+        
+        .section-content {
+            padding: 2rem 3rem;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, var(--primary) 0%, var(--secondary-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            line-height: 1.8;
+        }
+        
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background-color: var(--medium-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 255, 133, 0.15);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        
+        .card p {
+            color: var(--text-gray);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        
+        /* Objectives list styling */
+        .objectives-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .objectives-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            color: var(--text-gray);
+        }
+        
+        .objectives-list li::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+        
+        /* Table styling */
+        .table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--medium-gray);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background-color: rgba(0, 255, 133, 0.05);
+        }
+        
+        /* Dashboard version styling */
+        .dashboard-section {
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .dashboard-header {
+            padding: 2rem 3rem;
+            background-color: var(--dark-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .dashboard-title {
+            font-size: 1.75rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background-color: rgba(0, 255, 133, 0.15);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .dashboard-version {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background-color: var(--medium-gray);
+        }
+        
+        .dashboard-content {
+            padding: 3rem;
+        }
+        
+        .dashboard-image-wrapper {
+            position: relative;
+            background-color: var(--dark-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            overflow: hidden;
+        }
+        
+        .dashboard-image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 0;
+        }
+        
+        .dashboard-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        .dashboard-image:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+        
+        .dashboard-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--text-gray);
+            font-style: italic;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+        
+        /* Design elements styling */
+        .visual-design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .design-card {
+            background-color: var(--medium-gray);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .design-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .design-card h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .design-card p {
+            font-size: 1rem;
+            color: var(--text-gray);
+            margin-bottom: 0;
+        }
+        
+        .design-card i {
+            font-size: 1.25rem;
+        }
+        
+        /* Conclusion styling */
+        .conclusion {
+            background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--dark) 100%);
+            padding: 4rem;
+            border-radius: 16px;
+            margin: 5rem 0 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .conclusion::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 0;
+        }
+        
+        .conclusion-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .conclusion h2 {
+            color: var(--primary);
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            margin-bottom: 1.5rem;
+        }
+        
+        .conclusion p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 0;
+            line-height: 1.8;
+        }
+        
+        /* Skills section at the bottom */
+        .skills-section {
+            margin-top: 5rem;
+            padding: 3rem;
+            background-color: var(--dark-gray);
+            border-radius: 16px;
+        }
+        
+        .skills-title {
+            font-size: 1.75rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .skill-item {
+            background-color: var(--medium-gray);
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .skill-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .skill-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .skill-name {
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-description {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Footer styling */
+        footer {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-gray);
+            margin-top: 5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: var(--light-gray);
+            border-radius: 50%;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-link:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+            transform: translateY(-5px);
+        }
+        
+        /* Responsive styling */
+        @media (max-width: 992px) {
+            .navbar {
+                padding: 1rem 2rem;
+                justify-content: center;
+            }
+            
+            .hero {
+                padding: 0 2rem;
+                height: auto;
+                min-height: 90vh;
+                padding-top: 6rem;
+                padding-bottom: 4rem;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .content {
+                padding: 2rem;
+            }
+            
+            .section-header, .section-content {
+                padding: 2rem;
+            }
+            
+            .dashboard-version {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-content, .dashboard-image-wrapper {
+                padding: 2rem;
+            }
+            
+            .conclusion {
+                padding: 3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: row;
+                justify-content: center;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .nav-links {
+                display: flex;
+                gap: 1.5rem;
+                justify-content: center;
+                width: 100%;
+                padding-bottom: 0.25rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+            
+            .hero {
+                padding: 0 1rem;
+                height: auto;
+                min-height: 80vh;
+                padding-top: 5rem;
+                padding-bottom: 3rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .hero-tag {
+                font-size: 0.8rem;
+            }
+            
+            .skills-container {
+                gap: 0.5rem;
+            }
+            
+            .skill-badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .section-header, .section-content {
+                padding: 1.25rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            .objectives-list li {
+                font-size: 1rem;
+                padding-left: 2rem;
+            }
+            
+            .dashboard-header {
+                padding: 1.25rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            
+            .dashboard-title {
+                font-size: 1.4rem;
+            }
+            
+            .dashboard-content, .dashboard-image-wrapper {
+                padding: 1.25rem;
+            }
+            
+            .conclusion {
+                padding: 1.5rem;
+            }
+            
+            .conclusion p {
+                font-size: 1rem;
+            }
+            
+            .table-container {
+                margin: 1rem 0;
+            }
+            
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.8rem;
+            }
+            
+            .hero {
+                padding: 0 0.75rem;
+                padding-top: 4.5rem;
+                padding-bottom: 2.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .content {
+                padding: 0.75rem;
+            }
+            
+            .section {
+                margin: 2.5rem 0;
+            }
+            
+            .section-header, .section-content {
+                padding: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .section-title i {
+                font-size: 1.1rem;
+            }
+            
+            .card {
+                padding: 1.25rem;
+            }
+            
+            .card h4 {
+                font-size: 1.1rem;
+            }
+            
+            .card p {
+                font-size: 0.9rem;
+            }
+            
+            .dashboard-header {
+                padding: 1rem;
+            }
+            
+            .dashboard-title {
+                font-size: 1.2rem;
+            }
+            
+            .dashboard-content, .dashboard-image-wrapper {
+                padding: 1rem;
+            }
+            
+            .conclusion {
+                padding: 1.25rem;
+                margin: 2.5rem 0 1rem;
+            }
+            
+            .conclusion h2 {
+                font-size: 1.3rem;
+            }
+            
+            .conclusion p {
+                font-size: 0.9rem;
+            }
+            
+            .objectives-list li {
+                font-size: 0.9rem;
+                padding-left: 1.75rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+        
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#background">Background</a>
+            <a href="#solution">Solution</a>
+            <a href="#design">Design</a>
+            <a href="#results">Results</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-tag fade-in"><i class="fas fa-chart-line"></i> Katch Internship Project</div>
+            <h1 class="fade-in delay-1">Data Visualization Dashboard</h1>
+            <p class="hero-subtitle fade-in delay-2">A case study on leveraging data visualization to enhance productivity, foster competition, and provide real-time analytics for an entertainment data company.</p>
+            
+            <div class="skills-container fade-in delay-3">
+                <span class="skill-badge"><i class="fas fa-table"></i> Data Analysis</span>
+                <span class="skill-badge"><i class="fas fa-chart-pie"></i> Data Visualization</span>
+                <span class="skill-badge"><i class="fas fa-desktop"></i> Dashboard Design</span>
+                <span class="skill-badge"><i class="fas fa-code"></i> Google Data Studio</span>
+                <span class="skill-badge"><i class="fas fa-user-friends"></i> User Experience</span>
+                <span class="skill-badge"><i class="fas fa-lightbulb"></i> Problem Solving</span>
+            </div>
+        </div>
+    </section>
+    
+    <div class="content">
+        <div class="container">
+            <!-- Background Section -->
+            <section id="background" class="section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-building"></i> Background</h2>
+                </div>
+                <div class="section-content">
+                    <p>I worked on this project whilst interning at <span class="highlight">Katch</span> in Summer and Fall 2020. Katch is an entertainment-based data analytics company that aids content producers, marketers, and other industry stakeholders in making better data-driven decisions via proprietary film and TV genomes.</p>
+                    
+                    <p>In other words, Katch condenses film and TV content into quantitative and qualitative data based on what consumers prioritize whilst engaging with it (AKA the genome). As a <span class="highlight">Genome Analyst Intern</span>, my primary responsibility was to watch a selection of films, analyze them with respect to the genome, and enter the resulting data into Katch's database.</p>
+                    
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-film"></i></div>
+                            <h4>Entertainment Analytics</h4>
+                            <p>Katch's proprietary technology helped content producers and marketers make more informed decisions based on consumer preferences.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-database"></i></div>
+                            <h4>Data Collection</h4>
+                            <p>Interns were responsible for watching films and encoding their characteristics according to the Katch genome framework.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-users"></i></div>
+                            <h4>Team Structure</h4>
+                            <p>Interns were organized into competitive teams to encourage higher productivity in film coding activities.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- The Issue Section -->
+            <section id="issue" class="section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> The Issue</h2>
+                </div>
+                <div class="section-content">
+                    <p>As interns whose primarily responsibility was to enter huge amounts of data into a database, we were split into teams among which we often collaborated. Our employers encouraged friendly competition between the teams to motivate interns (and the teams they belonged to) to code as many films as they could each week. The team and the individual that had coded the most films by the end of each week were given shoutouts by the employers, encouraging other interns and teams to beat those records.</p>
+                    
+                    <p>However, my experience as an intern was that I was only able to track my own progress throughout the week and was unable to see where I or my team stood in relation to the others without painstakingly scanning an extensive Google Sheets file that contained unordered data about intern activity.</p>
+                    
+                    <p>Moreover, all of this data was presented in the form of tables, making it difficult to draw conclusions from it without significant effort.</p>
+                    
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-search"></i></div>
+                            <h4>Lack of Visibility</h4>
+                            <p>Interns couldn't easily track their standing compared to others without manually searching through data.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-table"></i></div>
+                            <h4>Data Format Limitations</h4>
+                            <p>Raw tabular data was difficult to interpret quickly, limiting its motivational potential.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-trophy"></i></div>
+                            <h4>Untapped Competitive Potential</h4>
+                            <p>The competitive environment lacked real-time feedback to drive higher engagement.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Solution + Objectives Section -->
+            <section id="solution" class="section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-lightbulb"></i> Solution + Objectives</h2>
+                </div>
+                <div class="section-content">
+                    <p>In order to remedy these issues, I decided to take the initiative to create a live dashboard that could represent all relevant data concerning intern coding activity.</p>
+                    
+                    <p>My objectives in doing so were as follows:</p>
+                    <ul class="objectives-list">
+                        <li>Create a central hub to visualize coding progress.</li>
+                        <li>Present data in a clear and engaging manner, so that both interns and employees can absorb the information with just a few glances.</li>
+                        <li>Enable interns and intern teams to better keep track of their standings each week and work towards coding the most films.</li>
+                        <li>Allow employers to better keep track of intern coding activity.</li>
+                    </ul>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-comment-alt"></i> Input from Employers</h4>
+                        <p>My ideas were met with enthusiasm when I presented them to my employers. They agreed that they would want to have some kind of leaderboard to motivate coders. They also mentioned that there were awards to be given out at the end of the internship, and teams and individual coders would be more motivated to compete for them if they could see clear indicators of their progress. Those at the top would perhaps be more inclined to code more films in order to occupy the first spot.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Presenting the Data Section -->
+            <section id="data" class="section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-chart-bar"></i> Presenting the Data</h2>
+                </div>
+                <div class="section-content">
+                    <p>I then had to determine what the best tool I could use to achieve my objectives was. After searching for live online data visualization tools, I came across <span class="highlight">Google Data Studio</span> and spent some time exploring its capabilities and how I could harness them.</p>
+                    
+                    <p>The following table depicts the charts/elements I chose to represent the various pieces of information I wished to present on the dashboard:</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Chart/Element Type</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Interns ordered by # of films coded</td>
+                                    <td>Table</td>
+                                    <td>Too many independent values to use a chart.</td>
+                                </tr>
+                                <tr>
+                                    <td>Teams ordered by # of films coded</td>
+                                    <td>Bar chart</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Average # of films coded per team</td>
+                                    <td>Bar chart</td>
+                                    <td>Teams did not have the same # of members, so it would only be fair to base the team leaderboard on averages.</td>
+                                </tr>
+                                <tr>
+                                    <td>Total films coded</td>
+                                    <td>Absolute value</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>% of films coded, % yet to be coded</td>
+                                    <td>Pie chart</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Visual Design Section -->
+            <section id="design" class="section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-palette"></i> Visual Design</h2>
+                </div>
+                <div class="section-content">
+                    <p>While putting the dashboard together, I made the following aesthetic choices to maximize impact and usability:</p>
+                    
+                    <div class="visual-design-grid">
+                        <div class="design-card">
+                            <h4><i class="fas fa-landmark"></i> Branding</h4>
+                            <p>I branded the dashboard with the Katch logo to maintain corporate identity and create a sense of ownership among users.</p>
+                        </div>
+                        
+                        <div class="design-card">
+                            <h4><i class="fas fa-eye"></i> Color Psychology</h4>
+                            <p>I used bright colors to draw attention to key information, creating visual hierarchy and improving information retention.</p>
+                        </div>
+                        
+                        <div class="design-card">
+                            <h4><i class="fas fa-fill-drip"></i> Background</h4>
+                            <p>I kept the background of the dashboard dark so that it does not overwhelm the user, improving focus on the data visualization elements.</p>
+                        </div>
+                        
+                        <div class="design-card">
+                            <h4><i class="fas fa-crown"></i> Gamification</h4>
+                            <p>I added a little crown graphic to the top of the team leaderboard to create a visual reward and motivate teams to compete for the top position.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Version #1 Section -->
+            <section id="version1" class="section dashboard-section">
+                <div class="dashboard-header">
+                    <h3 class="dashboard-title"><i class="fas fa-rocket"></i> Dashboard Implementation</h3>
+                    <span class="version-badge">Version 1.0</span>
+                </div>
+                <div class="dashboard-version">
+                    <div class="dashboard-content">
+                        <ul class="objectives-list">
+                            <li>The first version of the real-time dashboard featured essential metrics on intern and team performance.</li>
+                            <li>Data was sourced from the original Google Sheets tracker and transformed through additional calculations in a separate Sheets file.</li>
+                            <li>This processed data was imported to Google Data Studio as the primary source.</li>
+                            <li>Interactive elements like hover states on charts revealed more detailed quantitative information.</li>
+                            <li>The Coder Leaderboard showed data for 25 interns at a time with pagination for viewing additional entries.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="dashboard-image-wrapper">
+                        <img src="/api/placeholder/600/450" alt="Data Visualization Dashboard Version 1" class="dashboard-image" />
+                        <p class="dashboard-caption">Data Visualization Dashboard Version 1</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Feedback Section -->
+            <section id="feedback" class="section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-comment-dots"></i> Feedback & Iteration</h2>
+                </div>
+                <div class="section-content">
+                    <p>After presenting the dashboard to my employers, I collected feedback and made the following improvements:</p>
+                    
+                    <ul class="objectives-list">
+                        <li>Added a time-series chart that tracks how many films are being coded per day, enabling trend analysis.</li>
+                        <li>Implemented a script to remove empty rows and duplicate entries from the Coder Leaderboard, improving data integrity.</li>
+                        <li>Enhanced the visual hierarchy to make key performance indicators more prominent at first glance.</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Version #2 Section -->
+            <section id="version2" class="section dashboard-section">
+                <div class="dashboard-header">
+                    <h3 class="dashboard-title"><i class="fas fa-layer-group"></i> Enhanced Dashboard</h3>
+                    <span class="version-badge">Version 2.0</span>
+                </div>
+                <div class="dashboard-version">
+                    <div class="dashboard-content">
+                        <p>The second version of the dashboard incorporated user feedback and added more sophisticated analytics capabilities. While I cannot show the complete dashboard due to confidentiality reasons, the key addition was a time-series visualization that tracked daily coding activity.</p>
+                        
+                        <p>This new chart allowed both interns and management to:</p>
+                        <ul class="objectives-list">
+                            <li>Monitor daily productivity trends over time</li>
+                            <li>Identify peak performance days and potential bottlenecks</li>
+                            <li>Access precise date information through interactive hover functionality</li>
+                            <li>Compare current performance against historical patterns</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="dashboard-image-wrapper">
+                        <img src="/api/placeholder/600/450" alt="Movies Coded Per Day Chart" class="dashboard-image" />
+                        <p class="dashboard-caption">Movies Coded Per Day Chart - Key Addition to Version 2</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Reflection Section -->
+            <div class="conclusion">
+                <div class="conclusion-content">
+                    <h2><i class="fas fa-lightbulb"></i> Reflection & Impact</h2>
+                    <p>This project represented my first significant foray into interface design and data visualization. By taking the initiative to identify a problem and develop a solution, I was able to create meaningful impact for both the intern team and management. The dashboard successfully transformed raw tabular data into actionable insights, fostering healthy competition and improving productivity tracking.</p>
+                    <p>The iterative process taught me valuable lessons about assessing user needs, gathering feedback, and refining visualizations to better serve their purpose. This experience has deeply informed my approach to data presentation and user-centered design in subsequent projects.</p>
+                </div>
+            </div>
+    </div>
+</body>
+</html>
